@@ -33,8 +33,11 @@ window.addEventListener("load", function () {
       this.y = 200;
       this.speedX = 0;
       this.speedY = 0;
-      this.maxSpeed = 5;
+      this.maxSpeed = 3;
       this.image = document.getElementById("owlbear");
+      this.fps = 60;
+      this.frameInterval = 1000 / this.fps;
+      this.frameTimer = 0;
     }
 
     draw(context) {
@@ -57,7 +60,7 @@ window.addEventListener("load", function () {
       this.speedY = speedY;
     }
 
-    update() {
+    update(deltaTime) {
       if (this.game.lastKey == "PArrowLeft") {
         this.setSpeed(-this.maxSpeed, 0);
         this.frameY = 3;
@@ -102,10 +105,16 @@ window.addEventListener("load", function () {
       }
 
       // sprite animation
-      if (this.frameX < this.maxFrame) {
-        this.frameX++;
+      if (this.frameTimer > this.frameInterval) {
+        this.frameX < this.maxFrame ? this.frameX++ : (this.frameX = 0);
+        // if (this.frameX < this.maxFrame) {
+        //   this.frameX++;
+        // } else {
+        //   this.frameX = 0;
+        // }
+        this.frameTimer = 0;
       } else {
-        this.frameX = 0;
+        this.frameTimer += deltaTime;
       }
     }
   }
@@ -121,18 +130,20 @@ window.addEventListener("load", function () {
       this.input = new InputHandler(this);
       this.owlbear = new Owlbear(this);
     }
-    render(context) {
+    render(context, deltaTime) {
       this.owlbear.draw(context);
-      this.owlbear.update();
+      this.owlbear.update(deltaTime);
     }
   }
 
   const game = new Game(canvas.width, canvas.height);
-
-  function animate() {
+  let lastTime = 0;
+  function animate(timeStamp) {
+    const deltaTime = timeStamp - lastTime;
+    lastTime = timeStamp;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    game.render(ctx);
+    game.render(ctx, deltaTime);
     requestAnimationFrame(animate);
   }
-  animate();
+  animate(0);
 });
