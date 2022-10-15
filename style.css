@@ -55,6 +55,13 @@ canvas:hover ~ #leaves_right {
   transform: rotate(15deg);
 }
 
+#owlbear,
+#bush,
+#plant,
+#grass {
+  display: none;
+}
+
 @keyframes wobble {
   0% {
     top: 50px;
